@@ -6,3 +6,7 @@ __pycache__/
 ~$*.xlsx
 ~$*.xls
 *.tmp
+*.parquet
+debug.txt
+streamlit.log
+streamlit_err.log
