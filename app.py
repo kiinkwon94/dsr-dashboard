@@ -8,6 +8,25 @@ import os
 import re
 
 # ═══════════════════════════════════════════════════════════
+# 비밀번호 인증
+# ═══════════════════════════════════════════════════════════
+def _check_password() -> bool:
+    correct = st.secrets.get("password", "")
+    if st.session_state.get("authenticated"):
+        return True
+    pw = st.text_input("비밀번호를 입력하세요", type="password", key="pw_input")
+    if pw:
+        if pw == correct:
+            st.session_state["authenticated"] = True
+            st.rerun()
+        else:
+            st.error("비밀번호가 틀렸습니다.")
+    return False
+
+if not _check_password():
+    st.stop()
+
+# ═══════════════════════════════════════════════════════════
 # 설정
 # ═══════════════════════════════════════════════════════════
 DATA_DIR          = Path(__file__).parent / "data"
