@@ -102,6 +102,11 @@ BRAND_SKU_FILTER: dict[str, list[str]] = {
     "Cialis": ["시알리스정(ptp)"],
 }
 
+# Brand launch dates: rows before this date are excluded from the brand's data
+BRAND_START_DATE: dict[str, str] = {
+    "Cialis": "2026-04-01",
+}
+
 # Team-level whitelist: only rows whose Team Name is in this list are counted.
 # (exact match after lowercase + strip)
 BRAND_TEAM_FILTER: dict[str, list[str]] = {
@@ -254,6 +259,9 @@ def filter_by_brand(df: pd.DataFrame, brand: str) -> pd.DataFrame:
         allowed_teams = [t.lower().strip() for t in team_filters]
         team_mask = result[COL_TEAM].fillna("").str.lower().str.strip().isin(allowed_teams)
         result = result[team_mask]
+    start_date = BRAND_START_DATE.get(brand)
+    if start_date and COL_DATE in result.columns:
+        result = result[result[COL_DATE] >= pd.Timestamp(start_date)]
     return result
 
 
@@ -1072,7 +1080,8 @@ with tab_cyc:
 with tab_cis:
     st.subheader(f"Cialis — {sel_month_name} {year}")
     render_brand_tab("Cialis", ytd_df, py_ytd_df,
-                     c_actual="#1A5276", c_target="#85C1E9", c_line="#F4A62A")
+                     c_actual="#1A5276", c_target="#85C1E9", c_line="#F4A62A",
+                     show_pha=False)
 
 # ══════════════════════════════════════════════
 with tab_ws:
